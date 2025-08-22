@@ -24,10 +24,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aptivist.tripsupiicsaapp.R
+import com.aptivist.tripsupiicsaapp.domain.models.LocationModel
+import com.aptivist.tripsupiicsaapp.domain.models.TripModel
 
 @Composable
 fun HomeTripCard(
     modifier: Modifier = Modifier,
+    trip: TripModel,
 ) {
     Card(
         modifier = modifier,
@@ -65,7 +68,7 @@ fun HomeTripCard(
             ) {
                 Column {
                     Text(
-                        "Trip to Miami",
+                        trip.name,
                         style = TextStyle(
                             color = Color.White
                         ),
@@ -73,7 +76,7 @@ fun HomeTripCard(
                         fontWeight = FontWeight.W400,
                     )
                     Text(
-                        "Florida",
+                        trip.destination,
                         style = TextStyle(
                             color = Color.White
                         ),
@@ -89,5 +92,20 @@ fun HomeTripCard(
 @Preview
 @Composable
 fun HomeTripCardPreview() {
-    HomeTripCard()
+    HomeTripCard(
+        trip = TripModel(
+            id = 1,
+            name = "Trip to CDMX",
+            destination = "Mexico",
+            startDate = "",
+            endDate = "",
+            location = LocationModel(
+                latitude = 0.0,
+                longitude = 0.0,
+            ),
+            notes = "",
+            coverImageUrl = "",
+            photosUris = emptyList()
+        )
+    )
 }
