@@ -21,6 +21,6 @@ import com.aptivist.tripsupiicsaapp.data.local.database.entities.TripPhotoEntity
 )
 abstract class TripsDatabase : RoomDatabase() {
 
-    abstract class tripDao() : TripDao
+    abstract fun tripDao() : TripDao
 
 }

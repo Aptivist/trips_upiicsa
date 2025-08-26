@@ -1,12 +1,16 @@
 package com.aptivist.tripsupiicsaapp.data.local.repository
 
+import android.content.Context
+import androidx.room.Room
+import com.aptivist.tripsupiicsaapp.data.local.database.TripsDatabase
 import com.aptivist.tripsupiicsaapp.data.local.database.daos.TripDao
 import com.aptivist.tripsupiicsaapp.data.local.database.toDomainModel
 import com.aptivist.tripsupiicsaapp.domain.contracts.ITripRepository
 import com.aptivist.tripsupiicsaapp.domain.models.DomainResponse
 import com.aptivist.tripsupiicsaapp.domain.models.TripModel
+import javax.inject.Inject
 
-class DatabaseTripRepository(private val tripDao: TripDao) : ITripRepository {
+class DatabaseTripRepository @Inject constructor(private val tripDao: TripDao) : ITripRepository {
 
     override suspend fun getAll(): DomainResponse<List<TripModel>> {
         try {

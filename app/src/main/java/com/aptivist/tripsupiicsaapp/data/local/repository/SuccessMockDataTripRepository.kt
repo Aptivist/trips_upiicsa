@@ -4,8 +4,9 @@ import com.aptivist.tripsupiicsaapp.domain.contracts.ITripRepository
 import com.aptivist.tripsupiicsaapp.domain.models.DomainResponse
 import com.aptivist.tripsupiicsaapp.domain.models.LocationModel
 import com.aptivist.tripsupiicsaapp.domain.models.TripModel
+import javax.inject.Inject
 
-class SuccessMockDataTripRepository : ITripRepository {
+class SuccessMockDataTripRepository @Inject constructor() : ITripRepository {
 
     override suspend fun getAll(): DomainResponse<List<TripModel>> {
         return DomainResponse.Success(

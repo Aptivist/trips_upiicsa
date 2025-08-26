@@ -21,6 +21,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.aptivist.tripsupiicsaapp.data.local.repository.SuccessMockDataTripRepository
 import com.aptivist.tripsupiicsaapp.domain.models.LocationModel
 import com.aptivist.tripsupiicsaapp.domain.models.TripModel
 import com.aptivist.tripsupiicsaapp.ui.core.HomeTripCard
@@ -28,7 +30,7 @@ import com.aptivist.tripsupiicsaapp.ui.viewmodels.HomeViewModel
 
 @Composable
 fun HomeView(
-    viewModel: HomeViewModel = HomeViewModel()
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
     val trips = remember { viewModel.trips }
 
