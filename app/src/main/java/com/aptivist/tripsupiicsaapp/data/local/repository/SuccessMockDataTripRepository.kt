@@ -19,7 +19,7 @@ class SuccessMockDataTripRepository @Inject constructor() : ITripRepository {
                     endDate = "",
                     location = LocationModel(latitude = 0.0, longitude = 0.0),
                     notes = "",
-                    coverImageUrl = "",
+                    coverImageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Sobrevuelos_CDMX_HJ2A4913_%2825514321687%29_%28cropped%29.jpg/960px-Sobrevuelos_CDMX_HJ2A4913_%2825514321687%29_%28cropped%29.jpg",
                     photosUris = emptyList()
                 ),
                 TripModel(
@@ -30,7 +30,7 @@ class SuccessMockDataTripRepository @Inject constructor() : ITripRepository {
                     endDate = "",
                     location = LocationModel(latitude = 0.0, longitude = 0.0),
                     notes = "",
-                    coverImageUrl = "",
+                    coverImageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/View_of_Monterrey_%282015%29.jpg/1200px-View_of_Monterrey_%282015%29.jpg",
                     photosUris = emptyList()
                 ),
                 TripModel(

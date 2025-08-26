@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    val tripRepository: ITripRepository
+    val tripRepository: SuccessMockDataTripRepository
 ) : ViewModel() {
 
     private val _trips = mutableStateListOf<TripModel>()
