@@ -31,8 +31,8 @@ interface TripDao {
     suspend fun upsert(trip: TripEntity): Long
 
     @Query("UPDATE trips Set cover_photo_id = :photoId, modified_at = :modifiedAt WHERE id = :tripId")
-    suspend fun setCoverPhotoId(tripId: Long, photoId: Long?, modifiedAt: Date = Date()) : Long
+    suspend fun setCoverPhotoId(tripId: Long, photoId: Long?, modifiedAt: Date = Date()) : Int
 
     @Query("DELETE FROM trips WHERE id = :tripId")
-    suspend fun deleteTripById(tripId: Long) : Long
+    suspend fun deleteTripById(tripId: Long) : Int
 }
