@@ -4,8 +4,9 @@ import com.aptivist.tripsupiicsaapp.domain.contracts.INavigationEmitter
 import com.aptivist.tripsupiicsaapp.domain.contracts.INavigationReceiver
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import javax.inject.Inject
 
-class NavigationBus : INavigationEmitter, INavigationReceiver {
+class NavigationBus @Inject constructor() : INavigationEmitter, INavigationReceiver {
 
     private val _navigation = MutableSharedFlow<NavigationAction>()
     override val navigation = _navigation.asSharedFlow()

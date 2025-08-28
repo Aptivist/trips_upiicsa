@@ -23,6 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.aptivist.tripsupiicsaapp.domain.models.LocationModel
 import com.aptivist.tripsupiicsaapp.domain.models.TripModel
 import com.aptivist.tripsupiicsaapp.ui.core.HomeTripCard
+import com.aptivist.tripsupiicsaapp.ui.navigation.AppRoutes
 import com.aptivist.tripsupiicsaapp.ui.viewmodels.HomeViewModel
 
 @Composable
@@ -32,19 +33,30 @@ fun HomeView(
     val trips = remember { viewModel.trips }
 
     HomeViewContent(
-        trips = trips
+        trips = trips,
+        homeViewActions = { action ->
+            when (action) {
+                is HomeViewActions.OnNavigateToUpsertTrip -> {
+                    viewModel.navigateTo(
+                        AppRoutes.UPSERT_TRIP,
+                        tripId = action.tripId,
+                    )
+                }
+            }
+        }
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HomeViewContent(
-    trips: List<TripModel>
+    trips: List<TripModel>,
+    homeViewActions: (HomeViewActions) -> Unit
 ) {
     Scaffold(
         floatingActionButton = {
             ExtendedFloatingActionButton(
-                onClick = { },
+                onClick = { homeViewActions.invoke(HomeViewActions.OnNavigateToUpsertTrip()) },
                 icon = { Icon(Icons.Filled.AddCircle, contentDescription = null) },
                 text = { Text("Add Trip") }
             )
@@ -133,5 +145,9 @@ private fun HomeViewPreview() {
                 photosUris = emptyList()
             )
         )
-    )
+    ) {
+        when (it) {
+            is HomeViewActions.OnNavigateToUpsertTrip -> {}
+        }
+    }
 }

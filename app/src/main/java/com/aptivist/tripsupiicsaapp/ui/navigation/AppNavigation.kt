@@ -63,7 +63,7 @@ fun AppNavigation(navigationReceiver: INavigationReceiver) {
     ) {
         composable(route = AppRoutes.HOME) { HomeView() }
         composable(
-            route = "${AppRoutes.UPSERT_TRIP}/${AppRoutesArgs.TRIP_ID}",
+            route = "${AppRoutes.UPSERT_TRIP}/{${AppRoutesArgs.TRIP_ID}}",
             arguments = listOf(
                 navArgument(AppRoutesArgs.TRIP_ID) {
                     type = NavType.LongType
