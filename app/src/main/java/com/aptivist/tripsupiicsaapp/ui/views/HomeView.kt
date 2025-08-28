@@ -81,6 +81,10 @@ private fun HomeViewContent(
     }
 }
 
+sealed class HomeViewActions {
+    data class OnNavigateToUpsertTrip(val tripId: Long = -1) : HomeViewActions()
+}
+
 @Preview
 @Composable
 private fun HomeViewPreview() {
