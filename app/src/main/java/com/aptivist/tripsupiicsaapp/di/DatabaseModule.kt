@@ -31,4 +31,20 @@ object DatabaseModule {
         return database.tripDao()
     }
 
+    @Provides
+    @Singleton
+    fun providePhotoDao(database : TripsDatabase) = database.photoDao()
+
+    @Provides
+    @Singleton
+    fun provideTripPhotoDao(database : TripsDatabase) = database.tripPhotoDao()
+
+    @Provides
+    @Singleton
+    fun provideJournalEntryDao(database : TripsDatabase) = database.journalEntryDao()
+
+    @Provides
+    @Singleton
+    fun provideCheckListEntryDao(database : TripsDatabase) = database.checkListEntryDao()
+
 }

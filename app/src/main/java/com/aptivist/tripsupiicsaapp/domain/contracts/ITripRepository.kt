@@ -5,4 +5,6 @@ import com.aptivist.tripsupiicsaapp.domain.models.TripModel
 
 interface ITripRepository {
     suspend fun getAll(): DomainResponse<List<TripModel>>
+
+    suspend fun getTripsWithPhotos(): DomainResponse<List<TripModel>>
 }
