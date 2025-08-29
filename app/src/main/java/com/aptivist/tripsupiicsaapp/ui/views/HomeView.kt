@@ -17,9 +17,11 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.aptivist.tripsupiicsaapp.R
 import com.aptivist.tripsupiicsaapp.domain.models.LocationModel
 import com.aptivist.tripsupiicsaapp.domain.models.TripModel
 import com.aptivist.tripsupiicsaapp.ui.core.HomeTripCard
@@ -42,6 +44,20 @@ fun HomeView(
                         tripId = action.tripId,
                     )
                 }
+
+                is HomeViewActions.OnNavigateToTripItemDetails -> {
+                    viewModel.navigateTo(
+                        AppRoutes.TRIP_DETAILS,
+                        action.tripId
+                    )
+                }
+
+                is HomeViewActions.RemoveTripItem -> {
+                    viewModel.removeTrip(action.tripId)
+                }
+                is HomeViewActions.ToggleDrawer -> {
+
+                }
             }
         }
     )
@@ -58,12 +74,12 @@ private fun HomeViewContent(
             ExtendedFloatingActionButton(
                 onClick = { homeViewActions.invoke(HomeViewActions.OnNavigateToUpsertTrip()) },
                 icon = { Icon(Icons.Filled.AddCircle, contentDescription = null) },
-                text = { Text("Add Trip") }
+                text = { Text(stringResource(R.string.add_trip)) }
             )
         },
         topBar = {
             TopAppBar(
-                title = { Text("Home") },
+                title = { Text(stringResource(R.string.home)) },
                 navigationIcon = {
                     IconButton(
                         onClick = { }
@@ -85,8 +101,33 @@ private fun HomeViewContent(
         ) {
             items(items = trips) { item ->
                 HomeTripCard(
-                    modifier = Modifier.padding(vertical = 8.dp),
+                    modifier = Modifier
+                        .padding(vertical = 8.dp)
+                        .animateItem(),
                     trip = item,
+                    onEditTripItem = {
+                        homeViewActions.invoke(
+                            HomeViewActions.OnNavigateToUpsertTrip(
+                                item.id ?: -1
+                            )
+                        )
+                    },
+                    onRemoveTripItem = {
+                        item.id?.let {
+                            homeViewActions.invoke(
+                                HomeViewActions.RemoveTripItem(it)
+                            )
+                        }
+                    },
+                    onNavigateToTripItemDetails = {
+                        item.id?.let {
+                            homeViewActions.invoke(
+                                HomeViewActions.OnNavigateToTripItemDetails(
+                                    item.id
+                                )
+                            )
+                        }
+                    }
                 )
             }
         }
@@ -95,6 +136,9 @@ private fun HomeViewContent(
 
 sealed class HomeViewActions {
     data class OnNavigateToUpsertTrip(val tripId: Long = -1) : HomeViewActions()
+    data class OnNavigateToTripItemDetails(val tripId: Long) : HomeViewActions()
+    data class ToggleDrawer(val open: Boolean) : HomeViewActions()
+    data class RemoveTripItem(val tripId: Long) : HomeViewActions()
 }
 
 @Preview
@@ -148,6 +192,9 @@ private fun HomeViewPreview() {
     ) {
         when (it) {
             is HomeViewActions.OnNavigateToUpsertTrip -> {}
+            is HomeViewActions.OnNavigateToTripItemDetails -> {}
+            is HomeViewActions.RemoveTripItem -> {}
+            is HomeViewActions.ToggleDrawer -> {}
         }
     }
 }
