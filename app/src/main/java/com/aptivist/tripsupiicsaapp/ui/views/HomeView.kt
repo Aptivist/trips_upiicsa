@@ -124,10 +124,13 @@ private fun HomeViewContent(
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
         ) {
-            items(items = trips) { item ->
+            items(
+                items = trips,
+                key = { it.id!! }
+            ) { item ->
                 HomeTripCard(
                     modifier = Modifier
-                        .padding(vertical = 8.dp)
+                        .padding(vertical = 4.dp)
                         .animateItem(),
                     trip = item,
                     onEditTripItem = {

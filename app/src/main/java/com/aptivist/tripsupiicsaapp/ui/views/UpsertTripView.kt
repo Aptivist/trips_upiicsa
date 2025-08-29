@@ -1,6 +1,10 @@
 package com.aptivist.tripsupiicsaapp.ui.views
 
 import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,8 +13,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Photo
@@ -121,6 +127,16 @@ fun UpsertTripContent(
     photosUris: Set<Uri?>,
     upsertTripViewActions: (UpsertTripViewActions) -> Unit,
 ) {
+
+    val pickMedia =
+        rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) { uris ->
+            if (uris.isNotEmpty()) {
+                upsertTripViewActions.invoke(
+                    UpsertTripViewActions.OnSelectCoverPhoto(uris)
+                )
+            }
+        }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -140,6 +156,7 @@ fun UpsertTripContent(
             modifier = Modifier
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp)
+                .verticalScroll(rememberScrollState())
         ) {
             CustomOutlinedTextField(
                 value = name,
@@ -199,7 +216,7 @@ fun UpsertTripContent(
                         .padding(12.dp),
                 ) {
                     Button(
-                        onClick = { }
+                        onClick = { pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) }
                     ) {
                         Row(
                             modifier = Modifier

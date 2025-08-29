@@ -11,6 +11,7 @@ import com.aptivist.tripsupiicsaapp.data.local.database.toEntity
 import com.aptivist.tripsupiicsaapp.domain.contracts.ITripRepository
 import com.aptivist.tripsupiicsaapp.domain.models.DomainResponse
 import com.aptivist.tripsupiicsaapp.domain.models.TripModel
+import com.aptivist.tripsupiicsaapp.domain.models.TripPhotoModel
 import javax.inject.Inject
 import kotlin.sequences.ifEmpty
 import kotlin.text.insert
@@ -23,20 +24,20 @@ class DatabaseTripRepository @Inject constructor(
 
 
     override suspend fun getAll(): DomainResponse<List<TripModel>> {
-        try {
-            val trips = tripDao.getAll()
-            return DomainResponse.Success(trips.map { tripEntity -> tripEntity.toDomainModel() })
+        return try {
+            val trips = tripDao.getAllTripsWithPhotos().map { it.toDomainModel() }
+            DomainResponse.Success(trips)
         } catch (e: Exception) {
-            return DomainResponse.Error("Error fetching trips: ${e.message}", code = 500)
+            DomainResponse.Error("Error fetching trips: ${e.message}", code = 500)
         }
     }
 
-    override suspend fun getTripsWithPhotos(): DomainResponse<List<TripModel>> {
-        try {
-            val tripsWithPhotos = tripDao.getAllTripsWithPhotos()
-            return DomainResponse.Success(tripsWithPhotos.map { it.toDomainModel() })
+    override suspend fun getTripPhotos(tripId: Long): DomainResponse<List<TripPhotoModel>> {
+        return try {
+            val photos = tripPhotoDao.getPhotosForTrip(tripId).map { it.toDomainModel() }
+            DomainResponse.Success(photos)
         } catch (e: Exception) {
-            return DomainResponse.Error("Error fetching trips with photos: ${e.message}", code = 500)
+            DomainResponse.Error("Error fetching trip photos: ${e.message}", code = 500)
         }
     }
 
@@ -119,7 +120,9 @@ class DatabaseTripRepository @Inject constructor(
 
             // Return the updated trip with the new ID
             updatedTrip = updatedTrip.copy(
-                coverImageUrl = trip.coverImageUrl.ifEmpty { trip.photosUris.firstOrNull().orEmpty() }
+                coverImageUrl = trip.coverImageUrl.ifEmpty {
+                    trip.photosUris.firstOrNull().orEmpty()
+                }
             )
 
             DomainResponse.Success(updatedTrip)

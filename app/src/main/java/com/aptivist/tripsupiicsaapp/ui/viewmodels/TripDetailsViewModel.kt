@@ -217,25 +217,25 @@ class TripDetailsViewModel @Inject constructor(
     }
 
     fun loadPhotos() {
-//        viewModelScope.launch {
-//            val response = tripRepository.getTripPhotos(tripId)
-//            when (response) {
-//                is DomainResponse.Success -> {
-//                    _photos.clear()
-//                    _photos.addAll(response.data)
-//                }
-//
-//                is DomainResponse.Error -> {
-//                    _dialogState.value = DialogState(
-//                        titleResId = R.string.error,
-//                        messageResId = R.string.there_was_an_error_trying_to_load_the_photos_please_try_again,
-//                        confirmText = R.string.ok,
-//                        onConfirm = { onDismissDialog() },
-//                        onDismiss = { onDismissDialog() }
-//                    )
-//                }
-//            }
-//        }
+        viewModelScope.launch {
+            val response = tripRepository.getTripPhotos(tripId)
+            when (response) {
+                is DomainResponse.Success -> {
+                    _photos.clear()
+                    _photos.addAll(response.data)
+                }
+
+                is DomainResponse.Error -> {
+                    _dialogState.value = DialogState(
+                        titleResId = R.string.error,
+                        messageResId = R.string.there_was_an_error_trying_to_load_the_photos_please_try_again,
+                        confirmText = R.string.ok,
+                        onConfirm = { onDismissDialog() },
+                        onDismiss = { onDismissDialog() }
+                    )
+                }
+            }
+        }
     }
 
     fun loadCheckList() {
