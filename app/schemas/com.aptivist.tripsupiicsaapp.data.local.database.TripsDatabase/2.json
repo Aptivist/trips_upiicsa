@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "67117015fa0e3140f7ee459f30e7201c",
+    "identityHash": "201264372ca2bbf0a78389ad7512cdfa",
     "entities": [
       {
         "tableName": "photos",
@@ -191,6 +191,24 @@
             ],
             "orders": [],
             "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_trip_photos_trip_id_photo_id` ON `${TABLE_NAME}` (`trip_id`, `photo_id`)"
+          },
+          {
+            "name": "index_trip_photos_trip_id",
+            "unique": false,
+            "columnNames": [
+              "trip_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_trip_photos_trip_id` ON `${TABLE_NAME}` (`trip_id`)"
+          },
+          {
+            "name": "index_trip_photos_photo_id",
+            "unique": false,
+            "columnNames": [
+              "photo_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_trip_photos_photo_id` ON `${TABLE_NAME}` (`photo_id`)"
           }
         ],
         "foreignKeys": [
@@ -363,7 +381,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '67117015fa0e3140f7ee459f30e7201c')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '201264372ca2bbf0a78389ad7512cdfa')"
     ]
   }
 }

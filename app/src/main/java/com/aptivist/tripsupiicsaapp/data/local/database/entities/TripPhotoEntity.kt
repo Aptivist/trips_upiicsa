@@ -27,8 +27,8 @@ import java.util.Date
     ]
 )
 data class TripPhotoEntity(
-    @ColumnInfo(name = "trip_id") val tripId: Long,
-    @ColumnInfo(name = "photo_id") val photoId: Long,
+    @ColumnInfo(name = "trip_id", index = true) val tripId: Long,
+    @ColumnInfo(name = "photo_id", index = true) val photoId: Long,
     @PrimaryKey(autoGenerate = true) val id: Long? = null,
     @ColumnInfo(name = "created_at", defaultValue = "CURRENT_TIMESTAMP") val createdAt: Date? = null,
     @ColumnInfo(name = "modified_at", defaultValue = "CURRENT_TIMESTAMP") val modifiedAt: Date? = null
