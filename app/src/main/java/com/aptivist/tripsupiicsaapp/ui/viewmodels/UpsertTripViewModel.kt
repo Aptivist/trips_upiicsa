@@ -13,6 +13,8 @@ import com.aptivist.tripsupiicsaapp.data.local.navigation.NavigationAction
 import com.aptivist.tripsupiicsaapp.domain.contracts.INavigationEmitter
 import com.aptivist.tripsupiicsaapp.domain.contracts.ITripRepository
 import com.aptivist.tripsupiicsaapp.domain.models.DomainResponse
+import com.aptivist.tripsupiicsaapp.domain.models.LocationModel
+import com.aptivist.tripsupiicsaapp.domain.models.TripModel
 import com.aptivist.tripsupiicsaapp.ui.state.DialogState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -102,81 +104,81 @@ class UpsertTripViewModel @Inject constructor(
 
     fun onDone() {
         _isLoading.value = true
-//        viewModelScope.launch {
-//            val trip = TripModel(
-//                id = tripId,
-//                name = _name.value,
-//                destination = _destination.value,
-//                startDate = _startDate.value,
-//                endDate = _endDate.value,
-//                location = LocationModel(
-//                    latitude = _latitude.value.toDoubleOrNull() ?: 0.0,
-//                    longitude = _longitude.value.toDoubleOrNull() ?: 0.0
-//                ),
-//                notes = _notes.value,
-//                coverImageUrl = "",
-//                photosUris = _photosUris.map { it.toString() }
-//            )
-//            val result = tripRepository.upsert(trip)
-//
-//            _isLoading.value = false
-//
-//            when (result) {
-//                is DomainResponse.Success -> {
-//                    tripId = result.data.id
-//                    navigationEmitter.post(NavigationAction.NavigateBack)
-//                }
-//
-//                is DomainResponse.Error -> {
-//                    _dialogState.value = DialogState(
-//                        titleResId = R.string.error,
-//                        messageResId = R.string.there_was_an_error_trying_to_save_the_data_please_try_again,
-//                        confirmText = R.string.ok,
-//                        onConfirm = { onDismissDialog() },
-//                        onDismiss = { onDismissDialog() }
-//                    )
-//                }
-//            }
-//        }
+        viewModelScope.launch {
+            val trip = TripModel(
+                id = tripId,
+                name = _name.value,
+                destination = _destination.value,
+                startDate = _startDate.value,
+                endDate = _endDate.value,
+                location = LocationModel(
+                    latitude = _latitude.value.toDoubleOrNull() ?: 0.0,
+                    longitude = _longitude.value.toDoubleOrNull() ?: 0.0
+                ),
+                notes = _notes.value,
+                coverImageUrl = "",
+                photosUris = _photosUris.map { it.toString() }
+            )
+            val result = tripRepository.upsert(trip)
+
+            _isLoading.value = false
+
+            when (result) {
+                is DomainResponse.Success -> {
+                    tripId = result.data.id
+                    navigationEmitter.post(NavigationAction.NavigateBack)
+                }
+
+                is DomainResponse.Error -> {
+                    _dialogState.value = DialogState(
+                        titleResId = R.string.error,
+                        messageResId = R.string.there_was_an_error_trying_to_save_the_data_please_try_again,
+                        confirmText = R.string.ok,
+                        onConfirm = { onDismissDialog() },
+                        onDismiss = { onDismissDialog() }
+                    )
+                }
+            }
+        }
     }
 
     fun loadTrip(updateTripId: Long) {
-//        viewModelScope.launch {
-//            tripId = updateTripId
-//            _isLoading.value = true
-//            val result = tripRepository.getById(updateTripId)
-//            when (result) {
-//                is DomainResponse.Success -> {
-//                    val trip = result.data
-//                    _name.value = trip.name
-//                    _destination.value = trip.destination
-//                    _startDate.value = trip.startDate
-//                    _endDate.value = trip.endDate
-//                    _latitude.value = trip.location.latitude.toString()
-//                    _longitude.value = trip.location.longitude.toString()
-//                    _notes.value = trip.notes
-//                    _photosUris.clear()
-//                    _photosUris.addAll(trip.photosUris.map { it.toUri() })
-//                }
-//
-//                is DomainResponse.Error -> {
-//                    _dialogState.value = DialogState(
-//                        titleResId = R.string.error,
-//                        messageResId = R.string.there_was_an_error_loading_your_data_please_try_again,
-//                        confirmText = R.string.ok,
-//                        onConfirm = {
-//                            onDismissDialog()
-//                            onBack()
-//                        },
-//                        onDismiss = {
-//                            onDismissDialog()
-//                            onBack()
-//                        }
-//                    )
-//                }
-//            }
-//            _isLoading.value = false
-//        }
+        viewModelScope.launch {
+            tripId = updateTripId
+            _isLoading.value = true
+            val result = tripRepository.getById(updateTripId)
+            when (result) {
+                is DomainResponse.Success -> {
+                    val trip = result.data
+                    _name.value = trip.name
+                    _destination.value = trip.destination
+                    _startDate.value = trip.startDate
+                    _endDate.value = trip.endDate
+                    _latitude.value = trip.location.latitude.toString()
+                    _longitude.value = trip.location.longitude.toString()
+                    _notes.value = trip.notes
+                    _photosUris.clear()
+                    _photosUris.addAll(trip.photosUris.map { it.toUri() })
+                }
+
+                is DomainResponse.Error -> {
+                    _dialogState.value = DialogState(
+                        titleResId = R.string.error,
+                        messageResId = R.string.there_was_an_error_loading_your_data_please_try_again,
+                        confirmText = R.string.ok,
+                        onConfirm = {
+                            onDismissDialog()
+                            onBack()
+                        },
+                        onDismiss = {
+                            onDismissDialog()
+                            onBack()
+                        }
+                    )
+                }
+            }
+            _isLoading.value = false
+        }
     }
 
     fun onDismissDialog() {

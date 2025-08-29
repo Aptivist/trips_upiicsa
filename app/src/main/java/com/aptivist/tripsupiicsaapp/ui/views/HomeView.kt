@@ -15,6 +15,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -24,7 +26,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.aptivist.tripsupiicsaapp.R
 import com.aptivist.tripsupiicsaapp.domain.models.LocationModel
 import com.aptivist.tripsupiicsaapp.domain.models.TripModel
+import com.aptivist.tripsupiicsaapp.ui.core.CustomAlertDialog
 import com.aptivist.tripsupiicsaapp.ui.core.HomeTripCard
+import com.aptivist.tripsupiicsaapp.ui.core.LoadingDialog
 import com.aptivist.tripsupiicsaapp.ui.navigation.AppRoutes
 import com.aptivist.tripsupiicsaapp.ui.viewmodels.HomeViewModel
 
@@ -33,6 +37,11 @@ fun HomeView(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val trips = remember { viewModel.trips }
+    val isLoading by remember { viewModel.isLoading }
+
+    LaunchedEffect(Unit) {
+        viewModel.loadTrips()
+    }
 
     HomeViewContent(
         trips = trips,
@@ -55,12 +64,28 @@ fun HomeView(
                 is HomeViewActions.RemoveTripItem -> {
                     viewModel.removeTrip(action.tripId)
                 }
+
                 is HomeViewActions.ToggleDrawer -> {
 
                 }
             }
         }
     )
+
+    viewModel.dialogState.value?.let { state ->
+        CustomAlertDialog(
+            confirmText = stringResource(state.confirmText),
+            dismissText = state.dismissText?.let { stringResource(it) },
+            title = state.titleResId?.let { stringResource(it) },
+            text = state.messageResId?.let { stringResource(it) },
+            onDismiss = { state.onDismiss.invoke() },
+            onConfirm = { state.onConfirm.invoke() },
+        )
+    }
+
+    if (isLoading) {
+        LoadingDialog()
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

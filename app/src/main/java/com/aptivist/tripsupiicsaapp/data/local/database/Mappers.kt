@@ -10,6 +10,8 @@ import com.aptivist.tripsupiicsaapp.domain.models.JournalEntryModel
 import com.aptivist.tripsupiicsaapp.domain.models.LocationModel
 import com.aptivist.tripsupiicsaapp.domain.models.TripModel
 import com.aptivist.tripsupiicsaapp.domain.models.TripPhotoModel
+import com.aptivist.tripsupiicsaapp.ui.utils.formatDate
+import com.aptivist.tripsupiicsaapp.ui.utils.parseToDate
 
 fun TripEntity.toDomainModel(): TripModel {
     return TripModel(
@@ -30,8 +32,8 @@ fun TripWithPhotos.toDomainModel(): TripModel =
         id = this.trip.id,
         name = this.trip.name,
         destination = this.trip.destination,
-        startDate = this.trip.startDate.toString(),
-        endDate = this.trip.endDate.toString(),
+        startDate = formatDate(this.trip.startDate),
+        endDate = formatDate(this.trip.endDate),
         location = LocationModel(this.trip.latitude ?: 0.0, this.trip.longitude ?: 0.0),
         notes = this.trip.notes ?: "",
         coverImageUrl = this.coverPhoto?.name ?: "",
@@ -73,4 +75,17 @@ fun CheckListEntryModel.toEntity(tripId: Long): CheckListEntryEntity =
         name = this.name,
         isChecked = this.isChecked,
         tripId = tripId
+    )
+
+fun TripModel.toEntity(): TripEntity =
+    TripEntity(
+        id = this.id,
+        name = this.name,
+        destination = this.destination,
+        startDate = parseToDate(this.startDate),
+        endDate = parseToDate(this.endDate),
+        latitude = this.location.latitude,
+        longitude = this.location.longitude,
+        notes = this.notes,
+        coverPhotoId = null
     )
