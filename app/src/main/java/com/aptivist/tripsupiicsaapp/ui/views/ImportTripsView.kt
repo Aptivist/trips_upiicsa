@@ -1,6 +1,8 @@
 package com.aptivist.tripsupiicsaapp.ui.views
 
+import android.content.Context
 import android.net.Uri
+import android.provider.OpenableColumns
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -52,17 +54,48 @@ import com.aptivist.tripsupiicsaapp.R
 import com.aptivist.tripsupiicsaapp.ui.core.CustomAlertDialog
 import com.aptivist.tripsupiicsaapp.ui.viewmodels.ImportTripsViewModel
 import kotlin.invoke
-
 @Composable
 fun ImportTripsView(incomingUri: String?, viewModel: ImportTripsViewModel = hiltViewModel()) {
 
     val uri by remember { viewModel.uri }
 
+    LaunchedEffect(incomingUri) {
+        incomingUri?.let {
+            viewModel.setUri(Uri.decode(it))
+        }
+    }
+
+    val context = LocalContext.current
+
+    val filePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        uri?.let {
+            val name = getFileNameFromUri(context, it)
+            if (name?.endsWith(".trip") == true) {
+                viewModel.setUri(it.toString())
+            } else {
+                viewModel.onShowDialog(
+                    title = R.string.error,
+                    message = R.string.the_selected_file_is_not_valid_please_try_another_one
+                )
+            }
+            viewModel.setUri(it.toString())
+        } ?: run {
+            viewModel.onShowDialog(
+                title = R.string.canceled,
+                message = R.string.the_file_selection_has_been_canceled
+            )
+        }
+    }
 
     ImportTripsViewContent(uri) {
         when (it) {
-            ImportTripsViewAction.ImportTrips -> {}
-            is ImportTripsViewAction.SetUri -> {}
+            ImportTripsViewAction.ImportTrips -> {
+                viewModel.onImportTripsDialog()
+            }
+
+            is ImportTripsViewAction.SetUri -> filePickerLauncher.launch(arrayOf("application/octet-stream"))
             ImportTripsViewAction.OnBack -> viewModel.onBack()
         }
     }
@@ -77,7 +110,6 @@ fun ImportTripsView(incomingUri: String?, viewModel: ImportTripsViewModel = hilt
             onConfirm = { state.onConfirm.invoke() },
         )
     }
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -160,7 +192,7 @@ private fun ImportTripsViewContent(
                     Button(
                         modifier = Modifier
                             .fillMaxWidth(),
-                        onClick = {  }
+                        onClick = { onImportTripsViewAction.invoke(ImportTripsViewAction.SetUri) }
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically
@@ -177,7 +209,7 @@ private fun ImportTripsViewContent(
                     FilledTonalButton(
                         modifier = Modifier
                             .fillMaxWidth(),
-                        onClick = { },
+                        onClick = { onImportTripsViewAction.invoke(ImportTripsViewAction.ImportTrips) },
                         enabled = uri != null
                     ) {
                         Row(
@@ -193,6 +225,15 @@ private fun ImportTripsViewContent(
         }
     }
 
+}
+
+fun getFileNameFromUri(context: Context, uri: Uri): String? {
+    val cursor = context.contentResolver.query(uri, null, null, null, null)
+    return cursor?.use {
+        val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+        it.moveToFirst()
+        it.getString(nameIndex)
+    }
 }
 
 sealed class ImportTripsViewAction {
