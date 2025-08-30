@@ -11,6 +11,7 @@ import androidx.navigation.navArgument
 import com.aptivist.tripsupiicsaapp.data.local.navigation.NavigationAction
 import com.aptivist.tripsupiicsaapp.domain.contracts.INavigationReceiver
 import com.aptivist.tripsupiicsaapp.ui.views.HomeView
+import com.aptivist.tripsupiicsaapp.ui.views.ImportTripsView
 import com.aptivist.tripsupiicsaapp.ui.views.TripDetailsView
 import com.aptivist.tripsupiicsaapp.ui.views.UpsertTripView
 import kotlinx.coroutines.launch
@@ -93,6 +94,23 @@ fun AppNavigation(navigationReceiver: INavigationReceiver) {
             tripId?.let {
                 TripDetailsView(tripId = tripId)
             }
+        }
+        composable(
+            route = "${AppRoutes.IMPORT_TRIPS}/{${AppRoutesArgs.IMPORT_TRIPS_FILE}}",
+            arguments = listOf(
+                navArgument(AppRoutesArgs.IMPORT_TRIPS_FILE) {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                }
+            )) {
+
+            var importTripsUri = it.arguments?.getString(AppRoutesArgs.IMPORT_TRIPS_FILE)
+
+            if (importTripsUri == "null" || importTripsUri == "") importTripsUri = null
+
+            ImportTripsView(importTripsUri)
+
         }
     }
 

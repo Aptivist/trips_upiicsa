@@ -1,5 +1,6 @@
 package com.aptivist.tripsupiicsaapp.ui.views
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -7,17 +8,22 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,6 +37,7 @@ import com.aptivist.tripsupiicsaapp.ui.core.HomeTripCard
 import com.aptivist.tripsupiicsaapp.ui.core.LoadingDialog
 import com.aptivist.tripsupiicsaapp.ui.navigation.AppRoutes
 import com.aptivist.tripsupiicsaapp.ui.viewmodels.HomeViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun HomeView(
@@ -39,11 +46,15 @@ fun HomeView(
     val trips = remember { viewModel.trips }
     val isLoading by remember { viewModel.isLoading }
 
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val coroutineScope = rememberCoroutineScope()
+
     LaunchedEffect(Unit) {
         viewModel.loadTrips()
     }
 
     HomeViewContent(
+        drawerState = drawerState,
         trips = trips,
         homeViewActions = { action ->
             when (action) {
@@ -66,7 +77,13 @@ fun HomeView(
                 }
 
                 is HomeViewActions.ToggleDrawer -> {
-
+                    coroutineScope.launch {
+                        if (action.open) {
+                            drawerState.open()
+                        } else {
+                            drawerState.close()
+                        }
+                    }
                 }
             }
         }
@@ -91,72 +108,82 @@ fun HomeView(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HomeViewContent(
+    drawerState: DrawerState,
     trips: List<TripModel>,
     homeViewActions: (HomeViewActions) -> Unit
 ) {
-    Scaffold(
-        floatingActionButton = {
-            ExtendedFloatingActionButton(
-                onClick = { homeViewActions.invoke(HomeViewActions.OnNavigateToUpsertTrip()) },
-                icon = { Icon(Icons.Filled.AddCircle, contentDescription = null) },
-                text = { Text(stringResource(R.string.add_trip)) }
-            )
-        },
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.home)) },
-                navigationIcon = {
-                    IconButton(
-                        onClick = { }
-                    ) {
-                        Icon(
-                            Icons.Filled.Menu,
-                            contentDescription = null,
-                        )
-                    }
-                }
-            )
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            AppDrawer()
         }
-    ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-                .padding(horizontal = 16.dp)
-        ) {
-            items(
-                items = trips,
-                key = { it.id!! }
-            ) { item ->
-                HomeTripCard(
-                    modifier = Modifier
-                        .padding(vertical = 4.dp)
-                        .animateItem(),
-                    trip = item,
-                    onEditTripItem = {
-                        homeViewActions.invoke(
-                            HomeViewActions.OnNavigateToUpsertTrip(
-                                item.id ?: -1
-                            )
-                        )
-                    },
-                    onRemoveTripItem = {
-                        item.id?.let {
-                            homeViewActions.invoke(
-                                HomeViewActions.RemoveTripItem(it)
-                            )
-                        }
-                    },
-                    onNavigateToTripItemDetails = {
-                        item.id?.let {
-                            homeViewActions.invoke(
-                                HomeViewActions.OnNavigateToTripItemDetails(
-                                    item.id
-                                )
+    ) {
+        Scaffold(
+            floatingActionButton = {
+                ExtendedFloatingActionButton(
+                    onClick = { homeViewActions.invoke(HomeViewActions.OnNavigateToUpsertTrip()) },
+                    icon = { Icon(Icons.Filled.AddCircle, contentDescription = null) },
+                    text = { Text(stringResource(R.string.add_trip)) }
+                )
+            },
+            topBar = {
+                TopAppBar(
+                    title = { Text(stringResource(R.string.home)) },
+                    navigationIcon = {
+                        IconButton(
+                            onClick = {
+                                homeViewActions.invoke(HomeViewActions.ToggleDrawer(drawerState.isClosed))
+                            }
+                        ) {
+                            Icon(
+                                Icons.Filled.Menu,
+                                contentDescription = null,
                             )
                         }
                     }
                 )
+            }
+        ) { innerPadding ->
+            LazyColumn(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp)
+            ) {
+                items(
+                    items = trips,
+                    key = { it.id!! }
+                ) { item ->
+                    HomeTripCard(
+                        modifier = Modifier
+                            .padding(vertical = 4.dp)
+                            .animateItem(),
+                        trip = item,
+                        onEditTripItem = {
+                            homeViewActions.invoke(
+                                HomeViewActions.OnNavigateToUpsertTrip(
+                                    item.id ?: -1
+                                )
+                            )
+                        },
+                        onRemoveTripItem = {
+                            item.id?.let {
+                                homeViewActions.invoke(
+                                    HomeViewActions.RemoveTripItem(it)
+                                )
+                            }
+                        },
+                        onNavigateToTripItemDetails = {
+                            item.id?.let {
+                                homeViewActions.invoke(
+                                    HomeViewActions.OnNavigateToTripItemDetails(
+                                        item.id
+                                    )
+                                )
+                            }
+                        }
+                    )
+                }
             }
         }
     }
@@ -172,7 +199,9 @@ sealed class HomeViewActions {
 @Preview
 @Composable
 private fun HomeViewPreview() {
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
     HomeViewContent(
+        drawerState = drawerState,
         trips = listOf(
             TripModel(
                 id = 1,
